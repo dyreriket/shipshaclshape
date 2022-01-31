@@ -1,20 +1,41 @@
 
-** http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl
+* http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl
 
-*** SHACL Shape generator
+This shape checks that any vocabulary elements taken from the
+following namespaces are defined in vocabularies published at the
+namespace address. The shape is typically useful for avoiding typos
+like ~rdfs:type~ and ~owl:UnionOf~.
 
-This python script gets the vocabulary at the namespace of the
-vocabulary (which are assumed to be the same) and generates a shacl
-shape for it.
+#+NAME: prefixlist
+ - rdf :: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+ - rdfs :: http://www.w3.org/2000/01/rdf-schema#
+ - owl :: http://www.w3.org/2002/07/owl#
+ - skos :: http://www.w3.org/2004/02/skos/core#
+ - sh :: http://www.w3.org/ns/shacl#
+ - shsh :: http://www.w3.org/ns/shacl-shacl#
+ - dc :: http://purl.org/dc/elements/1.1/
+ - foaf :: http://xmlns.com/foaf/0.1/
+
+** Script                                                          :noexport:
 
 #+NAME: py_shacl_vocabulary_shape
-#+BEGIN_SRC python :var prefix="rdfs" :var url="http://www.w3.org/2000/01/rdf-schema#" :wrap src ttl 
+#+BEGIN_SRC python :var list=prefixlist :results value file :file std-vocabulary-elements.ttl :exports none
 import rdflib
+from rdflib import Graph, URIRef
 
-graph = rdflib.Graph()
-graph.parse(url)
+shapeGraph = Graph()
 
-queryBase = """
+for row in list:
+  (prefix, url) = row[0].split(' :: ')
+
+  shapeGraph.namespace_manager.bind(prefix, URIRef(url))
+
+  # read vocabulary
+  vgraph = rdflib.Graph()
+  vgraph.parse(url)
+
+  # get vocabulary elements 
+  queryBase = """
       SELECT DISTINCT ?value 
       WHERE { { ?value ?p ?o }
         UNION { ?s ?value ?o }
@@ -22,12 +43,15 @@ queryBase = """
       FILTER (isIRI(?value) 
         && STRSTARTS(STR(?value), '""" + url + """'))"""
 
-qResult = graph.query(queryBase  + " FILTER(STR(?value) != '" + url + "')} ORDER BY ?value ")
-vocabularyElements = qResult.serialize(format="csv").decode('utf-8').split()[1:];
+  qResult = vgraph.query(queryBase  + " FILTER(STR(?value) != '" + url + "')} ORDER BY ?value ")
+  vocabularyElements = qResult.serialize(format="csv").decode('utf-8').split()[1:];
 
-vocab = prefix.upper()
+  vocab = prefix.upper()
 
-shape =  '''
+  shape =  '''
+@prefix sh: 	  <http://www.w3.org/ns/shacl#> .
+@prefix sss:      <http://shipshape.dyreriket.xyz#> .
+@prefix sss-sve:  <http://shipshape.dyreriket.xyz/std-vocabulary-elements#> . 
 
 sss-sve:''' + vocab + '''VocabularyShape a sh:NodeShape ;
   sh:targetNode sss:ANY_NODE ; ## matches any node
@@ -38,61 +62,32 @@ sss-sve:''' + vocab + '''VocabularyShape a sh:NodeShape ;
       FILTER (?value NOT IN (''' + ', '.join(f'<{w}>' for w in vocabularyElements) + ''')) }""" ].
 '''
 
-return shape
+  shapeGraph.parse(data=shape, format='text/turtle')
+
+return shapeGraph.serialize(format='text/turtle').decode('utf-8')
 
 #+END_SRC
 
 #+RESULTS: py_shacl_vocabulary_shape
-#+BEGIN_src ttl
-sss-sve:RDFSVocabularyShape a sh:NodeShape ;
-	  sh:targetNode sss:ANY_NODE ; ## matches any node
-	  sh:name "RDFS vocabulary element." ;
-	  sh:message "Unrecognised RDFS vocabulary element. Check spelling." ;
-	  sh:sparql [ a sh:SPARQLConstraint ;
-	    sh:select """
-	      SELECT DISTINCT ?value 
-	      WHERE { { ?value ?p ?o }
-	        UNION { ?s ?value ?o }
-	        UNION { ?s ?p ?value }
-	      FILTER (isIRI(?value) 
-	        && STRSTARTS(STR(?value), 'http://www.w3.org/2000/01/rdf-schema#'))
-	      FILTER (?value NOT IN (<http://www.w3.org/2000/01/rdf-schema#Class>, <http://www.w3.org/2000/01/rdf-schema#Container>, <http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty>, <http://www.w3.org/2000/01/rdf-schema#Datatype>, <http://www.w3.org/2000/01/rdf-schema#Literal>, <http://www.w3.org/2000/01/rdf-schema#Resource>, <http://www.w3.org/2000/01/rdf-schema#comment>, <http://www.w3.org/2000/01/rdf-schema#domain>, <http://www.w3.org/2000/01/rdf-schema#isDefinedBy>, <http://www.w3.org/2000/01/rdf-schema#label>, <http://www.w3.org/2000/01/rdf-schema#member>, <http://www.w3.org/2000/01/rdf-schema#range>, <http://www.w3.org/2000/01/rdf-schema#seeAlso>, <http://www.w3.org/2000/01/rdf-schema#subClassOf>, <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)) }""" ].
-#+END_src
-
-
-*** All vocabularies
-
-#+NAME: std-vocabulary-elements
-#+BEGIN_SRC ttl :noweb yes
-@prefix sh: 	  <http://www.w3.org/ns/shacl#> .
-@prefix sss:      <http://shipshape.dyreriket.xyz#> .
-@prefix sss-sve:  <http://shipshape.dyreriket.xyz/std-vocabulary-elements#> . 
-
-<<py_shacl_vocabulary_shape(prefix="rdf",   url="http://www.w3.org/1999/02/22-rdf-syntax-ns#")>>
-<<py_shacl_vocabulary_shape(prefix="rdfs",  url="http://www.w3.org/2000/01/rdf-schema#")>>
-<<py_shacl_vocabulary_shape(prefix="owl",   url="http://www.w3.org/2002/07/owl#")>>
-<<py_shacl_vocabulary_shape(prefix="skos",  url="http://www.w3.org/2004/02/skos/core#")>>
-<<py_shacl_vocabulary_shape(prefix="sh",    url="http://www.w3.org/ns/shacl#")>>
-<<py_shacl_vocabulary_shape(prefix="shsh",  url="http://www.w3.org/ns/shacl-shacl#")>>
-<<py_shacl_vocabulary_shape(prefix="dc",  url="http://purl.org/dc/elements/1.1/")>>
-<<py_shacl_vocabulary_shape(prefix="foaf",  url="http://xmlns.com/foaf/0.1/")>>
-
-#+END_SRC
-
-*** Parse + pretty print file
-
-#+NAME: py_parse-ttl-block
-#+BEGIN_SRC python :var block=std-vocabulary-elements :results value file :file std-vocabulary-elements.ttl
-from rdflib import Graph
-
-g = Graph()
-g.parse(data=block, format="text/turtle")
-
-return g.serialize(format='turtle').decode('utf-8')
-#+END_SRC
-
-#+RESULTS: py_parse-ttl-block
 [[file:std-vocabulary-elements.ttl]]
+
+** Test                                                            :noexport:
+
+#+BEGIN_SRC sh :results value code :wrap src ttl
+apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=std-vocabulary-elements.ttl
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_src ttl
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+[ rdf:type     sh:ValidationReport ;
+  sh:conforms  true
+] .
+#+END_src
 
 * _org-mode                                                        :noexport:
 
