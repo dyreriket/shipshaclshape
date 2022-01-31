@@ -1,8 +1,5 @@
-* SHIPSHAPE
 
-RDF in shipshape! Useful SHACL shapes!
-
-** std-vocabulary-elements.ttl
+** http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl
 
 *** SHACL Shape generator
 
@@ -85,7 +82,7 @@ sss-sve:RDFSVocabularyShape a sh:NodeShape ;
 *** Parse + pretty print file
 
 #+NAME: py_parse-ttl-block
-#+BEGIN_SRC python :var block=std-vocabulary-elements :wrap "src ttl :tangle std-vocabulary-elements.ttl"
+#+BEGIN_SRC python :var block=std-vocabulary-elements :results value file :file std-vocabulary-elements.ttl
 from rdflib import Graph
 
 g = Graph()
@@ -95,120 +92,38 @@ return g.serialize(format='turtle').decode('utf-8')
 #+END_SRC
 
 #+RESULTS: py_parse-ttl-block
-#+BEGIN_src ttl :tangle std-vocabulary-elements.ttl
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix sss: <http://shipshape.dyreriket.xyz#> .
-@prefix sss-sve: <http://shipshape.dyreriket.xyz/std-vocabulary-elements#> .
+[[file:std-vocabulary-elements.ttl]]
 
-sss-sve:DCVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised DC vocabulary element. Check spelling." ;
-    sh:name "DC vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://purl.org/dc/elements/1.1/'))
-		      FILTER (?value NOT IN (<http://purl.org/dc/elements/1.1/contributor>, <http://purl.org/dc/elements/1.1/coverage>, <http://purl.org/dc/elements/1.1/creator>, <http://purl.org/dc/elements/1.1/date>, <http://purl.org/dc/elements/1.1/description>, <http://purl.org/dc/elements/1.1/format>, <http://purl.org/dc/elements/1.1/identifier>, <http://purl.org/dc/elements/1.1/language>, <http://purl.org/dc/elements/1.1/publisher>, <http://purl.org/dc/elements/1.1/relation>, <http://purl.org/dc/elements/1.1/rights>, <http://purl.org/dc/elements/1.1/source>, <http://purl.org/dc/elements/1.1/subject>, <http://purl.org/dc/elements/1.1/title>, <http://purl.org/dc/elements/1.1/type>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
+* _org-mode                                                        :noexport:
 
-sss-sve:FOAFVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised FOAF vocabulary element. Check spelling." ;
-    sh:name "FOAF vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://xmlns.com/foaf/0.1/'))
-		      FILTER (?value NOT IN (<http://xmlns.com/foaf/0.1/Agent>, <http://xmlns.com/foaf/0.1/Document>, <http://xmlns.com/foaf/0.1/Group>, <http://xmlns.com/foaf/0.1/Image>, <http://xmlns.com/foaf/0.1/LabelProperty>, <http://xmlns.com/foaf/0.1/OnlineAccount>, <http://xmlns.com/foaf/0.1/OnlineChatAccount>, <http://xmlns.com/foaf/0.1/OnlineEcommerceAccount>, <http://xmlns.com/foaf/0.1/OnlineGamingAccount>, <http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Person>, <http://xmlns.com/foaf/0.1/PersonalProfileDocument>, <http://xmlns.com/foaf/0.1/Project>, <http://xmlns.com/foaf/0.1/account>, <http://xmlns.com/foaf/0.1/accountName>, <http://xmlns.com/foaf/0.1/accountServiceHomepage>, <http://xmlns.com/foaf/0.1/age>, <http://xmlns.com/foaf/0.1/aimChatID>, <http://xmlns.com/foaf/0.1/based_near>, <http://xmlns.com/foaf/0.1/birthday>, <http://xmlns.com/foaf/0.1/currentProject>, <http://xmlns.com/foaf/0.1/depiction>, <http://xmlns.com/foaf/0.1/depicts>, <http://xmlns.com/foaf/0.1/dnaChecksum>, <http://xmlns.com/foaf/0.1/familyName>, <http://xmlns.com/foaf/0.1/family_name>, <http://xmlns.com/foaf/0.1/firstName>, <http://xmlns.com/foaf/0.1/focus>, <http://xmlns.com/foaf/0.1/fundedBy>, <http://xmlns.com/foaf/0.1/geekcode>, <http://xmlns.com/foaf/0.1/gender>, <http://xmlns.com/foaf/0.1/givenName>, <http://xmlns.com/foaf/0.1/givenname>, <http://xmlns.com/foaf/0.1/holdsAccount>, <http://xmlns.com/foaf/0.1/homepage>, <http://xmlns.com/foaf/0.1/icqChatID>, <http://xmlns.com/foaf/0.1/img>, <http://xmlns.com/foaf/0.1/interest>, <http://xmlns.com/foaf/0.1/isPrimaryTopicOf>, <http://xmlns.com/foaf/0.1/jabberID>, <http://xmlns.com/foaf/0.1/knows>, <http://xmlns.com/foaf/0.1/lastName>, <http://xmlns.com/foaf/0.1/logo>, <http://xmlns.com/foaf/0.1/made>, <http://xmlns.com/foaf/0.1/maker>, <http://xmlns.com/foaf/0.1/mbox>, <http://xmlns.com/foaf/0.1/mbox_sha1sum>, <http://xmlns.com/foaf/0.1/member>, <http://xmlns.com/foaf/0.1/membershipClass>, <http://xmlns.com/foaf/0.1/msnChatID>, <http://xmlns.com/foaf/0.1/myersBriggs>, <http://xmlns.com/foaf/0.1/name>, <http://xmlns.com/foaf/0.1/nick>, <http://xmlns.com/foaf/0.1/openid>, <http://xmlns.com/foaf/0.1/page>, <http://xmlns.com/foaf/0.1/pastProject>, <http://xmlns.com/foaf/0.1/phone>, <http://xmlns.com/foaf/0.1/plan>, <http://xmlns.com/foaf/0.1/primaryTopic>, <http://xmlns.com/foaf/0.1/publications>, <http://xmlns.com/foaf/0.1/schoolHomepage>, <http://xmlns.com/foaf/0.1/sha1>, <http://xmlns.com/foaf/0.1/skypeID>, <http://xmlns.com/foaf/0.1/status>, <http://xmlns.com/foaf/0.1/surname>, <http://xmlns.com/foaf/0.1/theme>, <http://xmlns.com/foaf/0.1/thumbnail>, <http://xmlns.com/foaf/0.1/tipjar>, <http://xmlns.com/foaf/0.1/title>, <http://xmlns.com/foaf/0.1/topic>, <http://xmlns.com/foaf/0.1/topic_interest>, <http://xmlns.com/foaf/0.1/weblog>, <http://xmlns.com/foaf/0.1/workInfoHomepage>, <http://xmlns.com/foaf/0.1/workplaceHomepage>, <http://xmlns.com/foaf/0.1/yahooChatID>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: Shipshape
+#+DATE: <2022-01-31 Mon>
+#+AUTHOR: Martin G. Skjæveland
+#+EMAIL: m.g.skjaeveland@gmail.com
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 25.2.2 (Org mode 9.1.14)
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t
+#+OPTIONS: html5-fancy:nil tex:t
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+DESCRIPTION:
+#+KEYWORDS:
+#+HTML_LINK_HOME:
+#+HTML_LINK_UP:
+#+HTML_MATHJAX:
+#+HTML_HEAD:
+#+HTML_HEAD_EXTRA:
+#+SUBTITLE: RDF in shipshape! Useful SHACL shapes!
+#+INFOJS_OPT:
+#+CREATOR: <a href="https://www.gnu.org/software/emacs/">Emacs</a> 25.2.2 (<a href="https://orgmode.org">Org</a> mode 9.1.14)
+#+LATEX_HEADER:
+#+EXPORT_FILE_NAME: index.html
 
-sss-sve:OWLVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised OWL vocabulary element. Check spelling." ;
-    sh:name "OWL vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/2002/07/owl#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/2002/07/owl#AllDifferent>, <http://www.w3.org/2002/07/owl#AllDisjointClasses>, <http://www.w3.org/2002/07/owl#AllDisjointProperties>, <http://www.w3.org/2002/07/owl#Annotation>, <http://www.w3.org/2002/07/owl#AnnotationProperty>, <http://www.w3.org/2002/07/owl#AsymmetricProperty>, <http://www.w3.org/2002/07/owl#Axiom>, <http://www.w3.org/2002/07/owl#Class>, <http://www.w3.org/2002/07/owl#DataRange>, <http://www.w3.org/2002/07/owl#DatatypeProperty>, <http://www.w3.org/2002/07/owl#DeprecatedClass>, <http://www.w3.org/2002/07/owl#DeprecatedProperty>, <http://www.w3.org/2002/07/owl#FunctionalProperty>, <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>, <http://www.w3.org/2002/07/owl#IrreflexiveProperty>, <http://www.w3.org/2002/07/owl#NamedIndividual>, <http://www.w3.org/2002/07/owl#NegativePropertyAssertion>, <http://www.w3.org/2002/07/owl#Nothing>, <http://www.w3.org/2002/07/owl#ObjectProperty>, <http://www.w3.org/2002/07/owl#Ontology>, <http://www.w3.org/2002/07/owl#OntologyProperty>, <http://www.w3.org/2002/07/owl#ReflexiveProperty>, <http://www.w3.org/2002/07/owl#Restriction>, <http://www.w3.org/2002/07/owl#SymmetricProperty>, <http://www.w3.org/2002/07/owl#Thing>, <http://www.w3.org/2002/07/owl#TransitiveProperty>, <http://www.w3.org/2002/07/owl#allValuesFrom>, <http://www.w3.org/2002/07/owl#annotatedProperty>, <http://www.w3.org/2002/07/owl#annotatedSource>, <http://www.w3.org/2002/07/owl#annotatedTarget>, <http://www.w3.org/2002/07/owl#assertionProperty>, <http://www.w3.org/2002/07/owl#backwardCompatibleWith>, <http://www.w3.org/2002/07/owl#bottomDataProperty>, <http://www.w3.org/2002/07/owl#bottomObjectProperty>, <http://www.w3.org/2002/07/owl#cardinality>, <http://www.w3.org/2002/07/owl#complementOf>, <http://www.w3.org/2002/07/owl#datatypeComplementOf>, <http://www.w3.org/2002/07/owl#deprecated>, <http://www.w3.org/2002/07/owl#differentFrom>, <http://www.w3.org/2002/07/owl#disjointUnionOf>, <http://www.w3.org/2002/07/owl#disjointWith>, <http://www.w3.org/2002/07/owl#distinctMembers>, <http://www.w3.org/2002/07/owl#equivalentClass>, <http://www.w3.org/2002/07/owl#equivalentProperty>, <http://www.w3.org/2002/07/owl#hasKey>, <http://www.w3.org/2002/07/owl#hasSelf>, <http://www.w3.org/2002/07/owl#hasValue>, <http://www.w3.org/2002/07/owl#imports>, <http://www.w3.org/2002/07/owl#incompatibleWith>, <http://www.w3.org/2002/07/owl#intersectionOf>, <http://www.w3.org/2002/07/owl#inverseOf>, <http://www.w3.org/2002/07/owl#maxCardinality>, <http://www.w3.org/2002/07/owl#maxQualifiedCardinality>, <http://www.w3.org/2002/07/owl#members>, <http://www.w3.org/2002/07/owl#minCardinality>, <http://www.w3.org/2002/07/owl#minQualifiedCardinality>, <http://www.w3.org/2002/07/owl#onClass>, <http://www.w3.org/2002/07/owl#onDataRange>, <http://www.w3.org/2002/07/owl#onDatatype>, <http://www.w3.org/2002/07/owl#onProperties>, <http://www.w3.org/2002/07/owl#onProperty>, <http://www.w3.org/2002/07/owl#oneOf>, <http://www.w3.org/2002/07/owl#priorVersion>, <http://www.w3.org/2002/07/owl#propertyChainAxiom>, <http://www.w3.org/2002/07/owl#propertyDisjointWith>, <http://www.w3.org/2002/07/owl#qualifiedCardinality>, <http://www.w3.org/2002/07/owl#sameAs>, <http://www.w3.org/2002/07/owl#someValuesFrom>, <http://www.w3.org/2002/07/owl#sourceIndividual>, <http://www.w3.org/2002/07/owl#targetIndividual>, <http://www.w3.org/2002/07/owl#targetValue>, <http://www.w3.org/2002/07/owl#topDataProperty>, <http://www.w3.org/2002/07/owl#topObjectProperty>, <http://www.w3.org/2002/07/owl#unionOf>, <http://www.w3.org/2002/07/owl#versionIRI>, <http://www.w3.org/2002/07/owl#versionInfo>, <http://www.w3.org/2002/07/owl#withRestrictions>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-
-sss-sve:RDFSVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised RDFS vocabulary element. Check spelling." ;
-    sh:name "RDFS vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/2000/01/rdf-schema#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/2000/01/rdf-schema#Class>, <http://www.w3.org/2000/01/rdf-schema#Container>, <http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty>, <http://www.w3.org/2000/01/rdf-schema#Datatype>, <http://www.w3.org/2000/01/rdf-schema#Literal>, <http://www.w3.org/2000/01/rdf-schema#Resource>, <http://www.w3.org/2000/01/rdf-schema#comment>, <http://www.w3.org/2000/01/rdf-schema#domain>, <http://www.w3.org/2000/01/rdf-schema#isDefinedBy>, <http://www.w3.org/2000/01/rdf-schema#label>, <http://www.w3.org/2000/01/rdf-schema#member>, <http://www.w3.org/2000/01/rdf-schema#range>, <http://www.w3.org/2000/01/rdf-schema#seeAlso>, <http://www.w3.org/2000/01/rdf-schema#subClassOf>, <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-
-sss-sve:RDFVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised RDF vocabulary element. Check spelling." ;
-    sh:name "RDF vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#CompoundLiteral>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#JSON>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#List>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#direction>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#first>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#langString>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#language>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#value>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-
-sss-sve:SHSHVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised SHSH vocabulary element. Check spelling." ;
-    sh:name "SHSH vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/ns/shacl-shacl#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/ns/shacl-shacl#EntailmentShape>, <http://www.w3.org/ns/shacl-shacl#ListNodeShape>, <http://www.w3.org/ns/shacl-shacl#ListShape>, <http://www.w3.org/ns/shacl-shacl#NodeShapeShape>, <http://www.w3.org/ns/shacl-shacl#PathListWithAtLeast2Members>, <http://www.w3.org/ns/shacl-shacl#PathNodeShape>, <http://www.w3.org/ns/shacl-shacl#PathShape>, <http://www.w3.org/ns/shacl-shacl#PropertyShapeShape>, <http://www.w3.org/ns/shacl-shacl#ShapeShape>, <http://www.w3.org/ns/shacl-shacl#ShapesGraphShape>, <http://www.w3.org/ns/shacl-shacl#ShapesListShape>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-
-sss-sve:SHVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised SH vocabulary element. Check spelling." ;
-    sh:name "SH vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/ns/shacl#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/ns/shacl#AbstractResult>, <http://www.w3.org/ns/shacl#AndConstraintComponent>, <http://www.w3.org/ns/shacl#AndConstraintComponent-and>, <http://www.w3.org/ns/shacl#BlankNode>, <http://www.w3.org/ns/shacl#BlankNodeOrIRI>, <http://www.w3.org/ns/shacl#BlankNodeOrLiteral>, <http://www.w3.org/ns/shacl#ClassConstraintComponent>, <http://www.w3.org/ns/shacl#ClassConstraintComponent-class>, <http://www.w3.org/ns/shacl#ClosedConstraintComponent>, <http://www.w3.org/ns/shacl#ClosedConstraintComponent-closed>, <http://www.w3.org/ns/shacl#ClosedConstraintComponent-ignoredProperties>, <http://www.w3.org/ns/shacl#ConstraintComponent>, <http://www.w3.org/ns/shacl#DatatypeConstraintComponent>, <http://www.w3.org/ns/shacl#DatatypeConstraintComponent-datatype>, <http://www.w3.org/ns/shacl#DisjointConstraintComponent>, <http://www.w3.org/ns/shacl#DisjointConstraintComponent-disjoint>, <http://www.w3.org/ns/shacl#EqualsConstraintComponent>, <http://www.w3.org/ns/shacl#EqualsConstraintComponent-equals>, <http://www.w3.org/ns/shacl#ExpressionConstraintComponent>, <http://www.w3.org/ns/shacl#ExpressionConstraintComponent-expression>, <http://www.w3.org/ns/shacl#Function>, <http://www.w3.org/ns/shacl#HasValueConstraintComponent>, <http://www.w3.org/ns/shacl#HasValueConstraintComponent-hasValue>, <http://www.w3.org/ns/shacl#IRI>, <http://www.w3.org/ns/shacl#IRIOrLiteral>, <http://www.w3.org/ns/shacl#InConstraintComponent>, <http://www.w3.org/ns/shacl#InConstraintComponent-in>, <http://www.w3.org/ns/shacl#Info>, <http://www.w3.org/ns/shacl#JSConstraint>, <http://www.w3.org/ns/shacl#JSConstraint-js>, <http://www.w3.org/ns/shacl#JSConstraintComponent>, <http://www.w3.org/ns/shacl#JSExecutable>, <http://www.w3.org/ns/shacl#JSFunction>, <http://www.w3.org/ns/shacl#JSLibrary>, <http://www.w3.org/ns/shacl#JSRule>, <http://www.w3.org/ns/shacl#JSTarget>, <http://www.w3.org/ns/shacl#JSTargetType>, <http://www.w3.org/ns/shacl#JSValidator>, <http://www.w3.org/ns/shacl#LanguageInConstraintComponent>, <http://www.w3.org/ns/shacl#LanguageInConstraintComponent-languageIn>, <http://www.w3.org/ns/shacl#LessThanConstraintComponent>, <http://www.w3.org/ns/shacl#LessThanConstraintComponent-lessThan>, <http://www.w3.org/ns/shacl#LessThanOrEqualsConstraintComponent>, <http://www.w3.org/ns/shacl#LessThanOrEqualsConstraintComponent-lessThanOrEquals>, <http://www.w3.org/ns/shacl#Literal>, <http://www.w3.org/ns/shacl#MaxCountConstraintComponent>, <http://www.w3.org/ns/shacl#MaxCountConstraintComponent-maxCount>, <http://www.w3.org/ns/shacl#MaxExclusiveConstraintComponent>, <http://www.w3.org/ns/shacl#MaxExclusiveConstraintComponent-maxExclusive>, <http://www.w3.org/ns/shacl#MaxInclusiveConstraintComponent>, <http://www.w3.org/ns/shacl#MaxInclusiveConstraintComponent-maxInclusive>, <http://www.w3.org/ns/shacl#MaxLengthConstraintComponent>, <http://www.w3.org/ns/shacl#MaxLengthConstraintComponent-maxLength>, <http://www.w3.org/ns/shacl#MinCountConstraintComponent>, <http://www.w3.org/ns/shacl#MinCountConstraintComponent-minCount>, <http://www.w3.org/ns/shacl#MinExclusiveConstraintComponent>, <http://www.w3.org/ns/shacl#MinExclusiveConstraintComponent-minExclusive>, <http://www.w3.org/ns/shacl#MinInclusiveConstraintComponent>, <http://www.w3.org/ns/shacl#MinInclusiveConstraintComponent-minInclusive>, <http://www.w3.org/ns/shacl#MinLengthConstraintComponent>, <http://www.w3.org/ns/shacl#MinLengthConstraintComponent-minLength>, <http://www.w3.org/ns/shacl#NodeConstraintComponent>, <http://www.w3.org/ns/shacl#NodeConstraintComponent-node>, <http://www.w3.org/ns/shacl#NodeKind>, <http://www.w3.org/ns/shacl#NodeKindConstraintComponent>, <http://www.w3.org/ns/shacl#NodeKindConstraintComponent-nodeKind>, <http://www.w3.org/ns/shacl#NodeShape>, <http://www.w3.org/ns/shacl#NotConstraintComponent>, <http://www.w3.org/ns/shacl#NotConstraintComponent-not>, <http://www.w3.org/ns/shacl#OrConstraintComponent>, <http://www.w3.org/ns/shacl#OrConstraintComponent-or>, <http://www.w3.org/ns/shacl#Parameter>, <http://www.w3.org/ns/shacl#Parameterizable>, <http://www.w3.org/ns/shacl#PatternConstraintComponent>, <http://www.w3.org/ns/shacl#PatternConstraintComponent-flags>, <http://www.w3.org/ns/shacl#PatternConstraintComponent-pattern>, <http://www.w3.org/ns/shacl#PrefixDeclaration>, <http://www.w3.org/ns/shacl#PropertyConstraintComponent>, <http://www.w3.org/ns/shacl#PropertyConstraintComponent-property>, <http://www.w3.org/ns/shacl#PropertyGroup>, <http://www.w3.org/ns/shacl#PropertyShape>, <http://www.w3.org/ns/shacl#QualifiedMaxCountConstraintComponent>, <http://www.w3.org/ns/shacl#QualifiedMaxCountConstraintComponent-qualifiedMaxCount>, <http://www.w3.org/ns/shacl#QualifiedMaxCountConstraintComponent-qualifiedValueShape>, <http://www.w3.org/ns/shacl#QualifiedMaxCountConstraintComponent-qualifiedValueShapesDisjoint>, <http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent>, <http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent-qualifiedMinCount>, <http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent-qualifiedValueShape>, <http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent-qualifiedValueShapesDisjoint>, <http://www.w3.org/ns/shacl#ResultAnnotation>, <http://www.w3.org/ns/shacl#Rule>, <http://www.w3.org/ns/shacl#SPARQLAskExecutable>, <http://www.w3.org/ns/shacl#SPARQLAskValidator>, <http://www.w3.org/ns/shacl#SPARQLConstraint>, <http://www.w3.org/ns/shacl#SPARQLConstraintComponent>, <http://www.w3.org/ns/shacl#SPARQLConstraintComponent-sparql>, <http://www.w3.org/ns/shacl#SPARQLConstructExecutable>, <http://www.w3.org/ns/shacl#SPARQLExecutable>, <http://www.w3.org/ns/shacl#SPARQLFunction>, <http://www.w3.org/ns/shacl#SPARQLRule>, <http://www.w3.org/ns/shacl#SPARQLSelectExecutable>, <http://www.w3.org/ns/shacl#SPARQLSelectValidator>, <http://www.w3.org/ns/shacl#SPARQLTarget>, <http://www.w3.org/ns/shacl#SPARQLTargetType>, <http://www.w3.org/ns/shacl#SPARQLUpdateExecutable>, <http://www.w3.org/ns/shacl#Severity>, <http://www.w3.org/ns/shacl#Shape>, <http://www.w3.org/ns/shacl#Target>, <http://www.w3.org/ns/shacl#TargetType>, <http://www.w3.org/ns/shacl#TripleRule>, <http://www.w3.org/ns/shacl#UniqueLangConstraintComponent>, <http://www.w3.org/ns/shacl#UniqueLangConstraintComponent-uniqueLang>, <http://www.w3.org/ns/shacl#ValidationReport>, <http://www.w3.org/ns/shacl#ValidationResult>, <http://www.w3.org/ns/shacl#Validator>, <http://www.w3.org/ns/shacl#Violation>, <http://www.w3.org/ns/shacl#Warning>, <http://www.w3.org/ns/shacl#XoneConstraintComponent>, <http://www.w3.org/ns/shacl#XoneConstraintComponent-xone>, <http://www.w3.org/ns/shacl#alternativePath>, <http://www.w3.org/ns/shacl#and>, <http://www.w3.org/ns/shacl#annotationProperty>, <http://www.w3.org/ns/shacl#annotationValue>, <http://www.w3.org/ns/shacl#annotationVarName>, <http://www.w3.org/ns/shacl#ask>, <http://www.w3.org/ns/shacl#class>, <http://www.w3.org/ns/shacl#closed>, <http://www.w3.org/ns/shacl#condition>, <http://www.w3.org/ns/shacl#conforms>, <http://www.w3.org/ns/shacl#construct>, <http://www.w3.org/ns/shacl#datatype>, <http://www.w3.org/ns/shacl#deactivated>, <http://www.w3.org/ns/shacl#declare>, <http://www.w3.org/ns/shacl#defaultValue>, <http://www.w3.org/ns/shacl#description>, <http://www.w3.org/ns/shacl#detail>, <http://www.w3.org/ns/shacl#disjoint>, <http://www.w3.org/ns/shacl#entailment>, <http://www.w3.org/ns/shacl#equals>, <http://www.w3.org/ns/shacl#expression>, <http://www.w3.org/ns/shacl#filterShape>, <http://www.w3.org/ns/shacl#flags>, <http://www.w3.org/ns/shacl#focusNode>, <http://www.w3.org/ns/shacl#group>, <http://www.w3.org/ns/shacl#hasValue>, <http://www.w3.org/ns/shacl#ignoredProperties>, <http://www.w3.org/ns/shacl#in>, <http://www.w3.org/ns/shacl#intersection>, <http://www.w3.org/ns/shacl#inversePath>, <http://www.w3.org/ns/shacl#js>, <http://www.w3.org/ns/shacl#jsFunctionName>, <http://www.w3.org/ns/shacl#jsLibrary>, <http://www.w3.org/ns/shacl#jsLibraryURL>, <http://www.w3.org/ns/shacl#labelTemplate>, <http://www.w3.org/ns/shacl#languageIn>, <http://www.w3.org/ns/shacl#lessThan>, <http://www.w3.org/ns/shacl#lessThanOrEquals>, <http://www.w3.org/ns/shacl#maxCount>, <http://www.w3.org/ns/shacl#maxExclusive>, <http://www.w3.org/ns/shacl#maxInclusive>, <http://www.w3.org/ns/shacl#maxLength>, <http://www.w3.org/ns/shacl#message>, <http://www.w3.org/ns/shacl#minCount>, <http://www.w3.org/ns/shacl#minExclusive>, <http://www.w3.org/ns/shacl#minInclusive>, <http://www.w3.org/ns/shacl#minLength>, <http://www.w3.org/ns/shacl#name>, <http://www.w3.org/ns/shacl#namespace>, <http://www.w3.org/ns/shacl#node>, <http://www.w3.org/ns/shacl#nodeKind>, <http://www.w3.org/ns/shacl#nodeValidator>, <http://www.w3.org/ns/shacl#nodes>, <http://www.w3.org/ns/shacl#not>, <http://www.w3.org/ns/shacl#object>, <http://www.w3.org/ns/shacl#oneOrMorePath>, <http://www.w3.org/ns/shacl#optional>, <http://www.w3.org/ns/shacl#or>, <http://www.w3.org/ns/shacl#order>, <http://www.w3.org/ns/shacl#parameter>, <http://www.w3.org/ns/shacl#path>, <http://www.w3.org/ns/shacl#pattern>, <http://www.w3.org/ns/shacl#predicate>, <http://www.w3.org/ns/shacl#prefix>, <http://www.w3.org/ns/shacl#prefixes>, <http://www.w3.org/ns/shacl#property>, <http://www.w3.org/ns/shacl#propertyValidator>, <http://www.w3.org/ns/shacl#qualifiedMaxCount>, <http://www.w3.org/ns/shacl#qualifiedMinCount>, <http://www.w3.org/ns/shacl#qualifiedValueShape>, <http://www.w3.org/ns/shacl#qualifiedValueShapesDisjoint>, <http://www.w3.org/ns/shacl#result>, <http://www.w3.org/ns/shacl#resultAnnotation>, <http://www.w3.org/ns/shacl#resultMessage>, <http://www.w3.org/ns/shacl#resultPath>, <http://www.w3.org/ns/shacl#resultSeverity>, <http://www.w3.org/ns/shacl#returnType>, <http://www.w3.org/ns/shacl#rule>, <http://www.w3.org/ns/shacl#select>, <http://www.w3.org/ns/shacl#severity>, <http://www.w3.org/ns/shacl#shapesGraph>, <http://www.w3.org/ns/shacl#shapesGraphWellFormed>, <http://www.w3.org/ns/shacl#sourceConstraint>, <http://www.w3.org/ns/shacl#sourceConstraintComponent>, <http://www.w3.org/ns/shacl#sourceShape>, <http://www.w3.org/ns/shacl#sparql>, <http://www.w3.org/ns/shacl#subject>, <http://www.w3.org/ns/shacl#suggestedShapesGraph>, <http://www.w3.org/ns/shacl#target>, <http://www.w3.org/ns/shacl#targetClass>, <http://www.w3.org/ns/shacl#targetNode>, <http://www.w3.org/ns/shacl#targetObjectsOf>, <http://www.w3.org/ns/shacl#targetSubjectsOf>, <http://www.w3.org/ns/shacl#this>, <http://www.w3.org/ns/shacl#union>, <http://www.w3.org/ns/shacl#uniqueLang>, <http://www.w3.org/ns/shacl#update>, <http://www.w3.org/ns/shacl#validator>, <http://www.w3.org/ns/shacl#value>, <http://www.w3.org/ns/shacl#xone>, <http://www.w3.org/ns/shacl#zeroOrMorePath>, <http://www.w3.org/ns/shacl#zeroOrOnePath>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-
-sss-sve:SKOSVocabularyShape a sh:NodeShape ;
-    sh:message "Unrecognised SKOS vocabulary element. Check spelling." ;
-    sh:name "SKOS vocabulary element." ;
-    sh:sparql [ a sh:SPARQLConstraint ;
-            sh:select """
-		      SELECT DISTINCT ?value 
-		      WHERE { { ?value ?p ?o }
-		        UNION { ?s ?value ?o }
-		        UNION { ?s ?p ?value }
-		      FILTER (isIRI(?value) 
-		        && STRSTARTS(STR(?value), 'http://www.w3.org/2004/02/skos/core#'))
-		      FILTER (?value NOT IN (<http://www.w3.org/2004/02/skos/core#Collection>, <http://www.w3.org/2004/02/skos/core#Concept>, <http://www.w3.org/2004/02/skos/core#ConceptScheme>, <http://www.w3.org/2004/02/skos/core#OrderedCollection>, <http://www.w3.org/2004/02/skos/core#altLabel>, <http://www.w3.org/2004/02/skos/core#broadMatch>, <http://www.w3.org/2004/02/skos/core#broader>, <http://www.w3.org/2004/02/skos/core#broaderTransitive>, <http://www.w3.org/2004/02/skos/core#changeNote>, <http://www.w3.org/2004/02/skos/core#closeMatch>, <http://www.w3.org/2004/02/skos/core#definition>, <http://www.w3.org/2004/02/skos/core#editorialNote>, <http://www.w3.org/2004/02/skos/core#exactMatch>, <http://www.w3.org/2004/02/skos/core#example>, <http://www.w3.org/2004/02/skos/core#hasTopConcept>, <http://www.w3.org/2004/02/skos/core#hiddenLabel>, <http://www.w3.org/2004/02/skos/core#historyNote>, <http://www.w3.org/2004/02/skos/core#inScheme>, <http://www.w3.org/2004/02/skos/core#mappingRelation>, <http://www.w3.org/2004/02/skos/core#member>, <http://www.w3.org/2004/02/skos/core#memberList>, <http://www.w3.org/2004/02/skos/core#narrowMatch>, <http://www.w3.org/2004/02/skos/core#narrower>, <http://www.w3.org/2004/02/skos/core#narrowerTransitive>, <http://www.w3.org/2004/02/skos/core#notation>, <http://www.w3.org/2004/02/skos/core#note>, <http://www.w3.org/2004/02/skos/core#prefLabel>, <http://www.w3.org/2004/02/skos/core#related>, <http://www.w3.org/2004/02/skos/core#relatedMatch>, <http://www.w3.org/2004/02/skos/core#scopeNote>, <http://www.w3.org/2004/02/skos/core#semanticRelation>, <http://www.w3.org/2004/02/skos/core#topConceptOf>)) }""" ] ;
-    sh:targetNode sss:ANY_NODE .
-#+END_src
