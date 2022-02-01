@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-01-31 Mon 18:35 -->
+<!-- 2022-02-01 Tue 09:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Shipshape</title>
@@ -237,18 +237,34 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org425e236">1. http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl</a></li>
+<li><a href="#orgeb32646">1. http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl</a>
+<ul>
+<li><a href="#org1b4c214">1.1. Examples</a>
+<ul>
+<li><a href="#orgbca6547">1.1.1. <code>sh:conforms false</code></a></li>
+<li><a href="#orgfdac0e4">1.1.2. <code>sh:conforms true</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org425e236" class="outline-2">
-<h2 id="org425e236"><span class="section-number-2">1</span> <a href="http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl">http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl</a></h2>
+<div id="outline-container-orgeb32646" class="outline-2">
+<h2 id="orgeb32646"><span class="section-number-2">1</span> <a href="http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl">http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl</a></h2>
 <div class="outline-text-2" id="text-1">
 <p>
-This shape checks that any vocabulary elements taken from the
-following namespaces are defined in vocabularies published at the
-namespace address. The shape is typically useful for avoiding typos
-like <code>rdfs:type</code> and <code>owl:UnionOf</code>.
+This set of shapes check that the vocabulary elements that belong to
+any of the following following namespaces are also found in
+vocabularies published at the namespace address. In other words, they
+check that the RDF data does not use terms from these vocabularies
+that are not defined in them, hence avoiding typos like <code>rdfs:type</code>
+(should be <code>rdf:type</code>) and <code>owl:UnionOf</code> (should be <code>owl:unionOf</code>).
+</p>
+
+<p>
+The shapes only check IRIs and not shapes, i.e., they do not check
+that the these vocabularies are use according to their specification.
 </p>
 
 <dl class="org-dl">
@@ -262,12 +278,122 @@ like <code>rdfs:type</code> and <code>owl:UnionOf</code>.
 <dt>foaf</dt><dd><a href="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a></dd>
 </dl>
 </div>
+
+<div id="outline-container-org1b4c214" class="outline-3">
+<h3 id="org1b4c214"><span class="section-number-3">1.1</span> Examples</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<div id="outline-container-orgbca6547" class="outline-4">
+<h4 id="orgbca6547"><span class="section-number-4">1.1.1</span> <code>sh:conforms false</code></h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+RDF data:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ttl">@prefix rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix ex: &lt;http://example.com#&gt; .
+
+ex:a rdfs:type ex:A .
+ex:b rdf:type ex:B .
+
+ex:A rdfs:subclassof ex:B .
+</pre>
+</div>
+
+<p>
+Checking with Jena (<a href="https://jena.apache.org/">https://jena.apache.org/</a>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=test/sve/ex1.ttl
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ttl">@prefix ex:      &lt;http://example.com#&gt; .
+@prefix rdf:     &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rdfs:    &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix sh:      &lt;http://www.w3.org/ns/shacl#&gt; .
+@prefix sss:     &lt;http://shipshape.dyreriket.xyz#&gt; .
+@prefix sss-sve: &lt;http://shipshape.dyreriket.xyz/std-vocabulary-elements#&gt; .
+@prefix xsd:     &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+[ rdf:type     sh:ValidationReport ;
+  sh:conforms  false ;
+  sh:result    [ rdf:type                      sh:ValidationResult ;
+                 sh:focusNode                  sss:ANY_NODE ;
+                 sh:resultMessage              "Unrecognised RDFS vocabulary element. Check spelling." ;
+                 sh:resultSeverity             sh:Violation ;
+                 sh:sourceConstraintComponent  sh:SPARQLConstraintComponent ;
+                 sh:sourceShape                sss-sve:RDFSVocabularyShape ;
+                 sh:value                      rdfs:subclassof
+               ] ;
+  sh:result    [ rdf:type                      sh:ValidationResult ;
+                 sh:focusNode                  sss:ANY_NODE ;
+                 sh:resultMessage              "Unrecognised RDFS vocabulary element. Check spelling." ;
+                 sh:resultSeverity             sh:Violation ;
+                 sh:sourceConstraintComponent  sh:SPARQLConstraintComponent ;
+                 sh:sourceShape                sss-sve:RDFSVocabularyShape ;
+                 sh:value                      rdfs:type
+               ]
+] .
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfdac0e4" class="outline-4">
+<h4 id="orgfdac0e4"><span class="section-number-4">1.1.2</span> <code>sh:conforms true</code></h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+RDF data. Notice that the <code>owl</code> vocabulary is not used according to
+the OWL specification. However, this is not within the scope of these
+shapes to check.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ttl">@prefix rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+@prefix ex: &lt;http://example.com#&gt; .
+
+
+owl:Class owl:unionOf owl:NamedIndividual .
+owl:Class owl:unionOf rdf:type .
+owl:unionOf ex:A ex:b .
+</pre>
+</div>
+
+<p>
+Checking with Jena (<a href="https://jena.apache.org/">https://jena.apache.org/</a>):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=test/sve/ex2.ttl
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ttl">@prefix rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix sh:   &lt;http://www.w3.org/ns/shacl#&gt; .
+@prefix xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+[ rdf:type     sh:ValidationReport ;
+  sh:conforms  true
+] .
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="date">Date: 2022-01-31 Mon 00:00</p>
 <p class="author">Author: Martin G. Skjæveland</p>
-<p class="date">Created: 2022-01-31 Mon 18:35</p>
+<p class="date">Created: 2022-02-01 Tue 09:30</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

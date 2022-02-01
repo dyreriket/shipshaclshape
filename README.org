@@ -1,10 +1,15 @@
 
 * http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl
 
-This shape checks that any vocabulary elements taken from the
-following namespaces are defined in vocabularies published at the
-namespace address. The shape is typically useful for avoiding typos
-like ~rdfs:type~ and ~owl:UnionOf~.
+This set of shapes check that the vocabulary elements that belong to
+any of the following following namespaces are also found in
+vocabularies published at the namespace address. In other words, they
+check that the RDF data does not use terms from these vocabularies
+that are not defined in them, hence avoiding typos like ~rdfs:type~
+(should be ~rdf:type~) and ~owl:UnionOf~ (should be ~owl:unionOf~).
+
+The shapes only check IRIs and not shapes, i.e., they do not check
+that the these vocabularies are use according to their specification.
 
 #+NAME: prefixlist
  - rdf :: http://www.w3.org/1999/02/22-rdf-syntax-ns#
@@ -71,10 +76,81 @@ return shapeGraph.serialize(format='text/turtle').decode('utf-8')
 #+RESULTS: py_shacl_vocabulary_shape
 [[file:std-vocabulary-elements.ttl]]
 
-** Test                                                            :noexport:
+** Examples                                                        
 
-#+BEGIN_SRC sh :results value code :wrap src ttl
-apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=std-vocabulary-elements.ttl
+*** ~sh:conforms false~
+
+RDF data:
+
+#+BEGIN_SRC ttl :tangle test/sve/ex1.ttl :mkdirp yes
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ex: <http://example.com#> .
+
+ex:a rdfs:type ex:A .
+ex:b rdf:type ex:B .
+
+ex:A rdfs:subclassof ex:B .
+#+END_SRC
+
+Checking with Jena (https://jena.apache.org/):
+
+#+BEGIN_SRC sh :results value code :wrap src ttl :exports both
+apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=test/sve/ex1.ttl
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_src ttl
+@prefix ex:      <http://example.com#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix sss:     <http://shipshape.dyreriket.xyz#> .
+@prefix sss-sve: <http://shipshape.dyreriket.xyz/std-vocabulary-elements#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+[ rdf:type     sh:ValidationReport ;
+  sh:conforms  false ;
+  sh:result    [ rdf:type                      sh:ValidationResult ;
+                 sh:focusNode                  sss:ANY_NODE ;
+                 sh:resultMessage              "Unrecognised RDFS vocabulary element. Check spelling." ;
+                 sh:resultSeverity             sh:Violation ;
+                 sh:sourceConstraintComponent  sh:SPARQLConstraintComponent ;
+                 sh:sourceShape                sss-sve:RDFSVocabularyShape ;
+                 sh:value                      rdfs:subclassof
+               ] ;
+  sh:result    [ rdf:type                      sh:ValidationResult ;
+                 sh:focusNode                  sss:ANY_NODE ;
+                 sh:resultMessage              "Unrecognised RDFS vocabulary element. Check spelling." ;
+                 sh:resultSeverity             sh:Violation ;
+                 sh:sourceConstraintComponent  sh:SPARQLConstraintComponent ;
+                 sh:sourceShape                sss-sve:RDFSVocabularyShape ;
+                 sh:value                      rdfs:type
+               ]
+] .
+#+END_src
+
+*** ~sh:conforms true~
+
+RDF data. Notice that the ~owl~ vocabulary is not used according to
+the OWL specification. However, this is not within the scope of these
+shapes to check.
+
+#+BEGIN_SRC ttl :tangle test/sve/ex2.ttl :mkdirp yes
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ex: <http://example.com#> .
+
+
+owl:Class owl:unionOf owl:NamedIndividual .
+owl:Class owl:unionOf rdf:type .
+owl:unionOf ex:A ex:b .
+#+END_SRC
+
+Checking with Jena (https://jena.apache.org/):
+
+#+BEGIN_SRC sh :results value code :wrap src ttl :exports both
+apache-jena/bin/shacl v --shapes=http://shipshape.dyreriket.xyz/std-vocabulary-elements.ttl --data=test/sve/ex2.ttl
 #+END_SRC
 
 #+RESULTS:
