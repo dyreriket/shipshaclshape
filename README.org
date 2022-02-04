@@ -20,11 +20,12 @@ that the these vocabularies are use according to their specification.
  - shsh :: http://www.w3.org/ns/shacl-shacl#
  - dc :: http://purl.org/dc/elements/1.1/
  - foaf :: http://xmlns.com/foaf/0.1/
+ - pav :: http://purl.org/pav/
 
 ** Script                                                          :noexport:
 
 #+NAME: py_shacl_vocabulary_shape
-#+BEGIN_SRC python :var list=prefixlist :results value file :file std-vocabulary-elements.ttl :exports none
+#+BEGIN_SRC python :var list=prefixlist :results value file :file std-vocabulary-elements.ttl :exports results
 import rdflib
 from rdflib import Graph, URIRef
 
