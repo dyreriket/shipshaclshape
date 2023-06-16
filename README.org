@@ -11,34 +11,43 @@ that are not defined in them, hence avoiding typos like ~rdfs:type~
 The shapes only check IRIs and not shapes, i.e., they do not check
 that the these vocabularies are use according to their specification.
 
-#+NAME: prefixlist
- - rdf :: http://www.w3.org/1999/02/22-rdf-syntax-ns#
- - rdfs :: http://www.w3.org/2000/01/rdf-schema#
- - owl :: http://www.w3.org/2002/07/owl#
- - skos :: http://www.w3.org/2004/02/skos/core#
- - sh :: http://www.w3.org/ns/shacl#
- - shsh :: http://www.w3.org/ns/shacl-shacl#
- - dc :: http://purl.org/dc/elements/1.1/
- - foaf :: http://xmlns.com/foaf/0.1/
- - pav :: http://purl.org/pav/
+#+NAME: vocabularies
+| prefix | namespace                                      | source                                                                                 |
+|--------+------------------------------------------------+----------------------------------------------------------------------------------------|
+| rdf    | http://www.w3.org/1999/02/22-rdf-syntax-ns#    |                                                                                        |
+| rdfs   | http://www.w3.org/2000/01/rdf-schema#          |                                                                                        |
+| owl    | http://www.w3.org/2002/07/owl#                 |                                                                                        |
+| skos   | http://www.w3.org/2004/02/skos/core#           |                                                                                        |
+| sh     | http://www.w3.org/ns/shacl#                    |                                                                                        |
+| shsh   | http://www.w3.org/ns/shacl-shacl#              |                                                                                        |
+| foaf   | http://xmlns.com/foaf/0.1/                     | http://xmlns.com/foaf/0.1/index.rdf                                                    |
+| pav    | http://purl.org/pav/                           | http://pav-ontology.github.io/pav/pav.rdf                                              |
+| dc     | http://purl.org/dc/elements/1.1/               | https://www.dublincore.org/specifications/dublin-core/dcmi-terms/dublin_core_terms.ttl |
+| vann   | http://purl.org/vocab/vann/                    | https://vocab.org/vann/vann-vocab-20100607.rdf                                         |
+
 
 ** Script                                                          :noexport:
 
 #+NAME: py_shacl_vocabulary_shape
-#+BEGIN_SRC python :var list=prefixlist :results value file :file std-vocabulary-elements.ttl :exports results
+#+BEGIN_SRC python :var table=vocabularies :results value file :file std-vocabulary-elements.ttl :exports results
 import rdflib
 from rdflib import Graph, URIRef
 
 shapeGraph = Graph()
 
-for row in list:
-  (prefix, url) = row[0].split(' :: ')
+for row in table:
+
+  prefix = str(row[0]).strip()
+  url = str(row[1]).strip()
+  source = str(row[2]).strip()
+  if(source == ''):
+    source = url
 
   shapeGraph.namespace_manager.bind(prefix, URIRef(url))
 
   # read vocabulary
   vgraph = rdflib.Graph()
-  vgraph.parse(url)
+  vgraph.parse(source)
 
   # get vocabulary elements 
   queryBase = """
@@ -49,8 +58,9 @@ for row in list:
       FILTER (isIRI(?value) 
         && STRSTARTS(STR(?value), '""" + url + """'))"""
 
-  qResult = vgraph.query(queryBase  + " FILTER(STR(?value) != '" + url + "')} ORDER BY ?value ")
-  vocabularyElements = qResult.serialize(format="csv").decode('utf-8').split()[1:];
+  #qResult = vgraph.query(queryBase + " FILTER(STR(?value) != '" + url + "')" + "} ORDER BY ?value ")
+  qResult = vgraph.query(queryBase + " } ORDER BY ?value ")
+  vocabularyElements = qResult.serialize(format="csv").split()[1:];
 
   vocab = prefix.upper()
 
@@ -65,12 +75,12 @@ sss-sve:''' + vocab + '''VocabularyShape a sh:NodeShape ;
   sh:message "Unrecognised ''' + vocab + ''' vocabulary element. Check spelling." ;
   sh:sparql [ a sh:SPARQLConstraint ;
     sh:select """''' + queryBase + '''
-      FILTER (?value NOT IN (''' + ', '.join(f'<{w}>' for w in vocabularyElements) + ''')) }""" ].
+      FILTER (?value NOT IN (''' + ', '.join("<" + w.decode('UTF-8') + ">" for w in vocabularyElements) + ''')) }""" ].
 '''
 
   shapeGraph.parse(data=shape, format='text/turtle')
 
-return shapeGraph.serialize(format='text/turtle').decode('utf-8')
+return shapeGraph.serialize(format='text/turtle')
 
 #+END_SRC
 
